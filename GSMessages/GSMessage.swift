@@ -325,13 +325,15 @@ public class GSMessage: NSObject {
         messageText.textAlignment = textAlignment.nsTextAlignment
         messageView.addSubview(messageText)
         messageView.accessibilityIdentifier = accessibilityIdentifier
-        
+
+        #if os(iOS)
         NotificationCenter.default.addObserver(self, selector: #selector(updateFrames), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         if position == .top {
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         }
+        #endif
         
         if hideOnTap { messageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapForHide(_:)))) }
         
@@ -405,13 +407,20 @@ public class GSMessage: NSObject {
                 if vc.edgesForExtendedLayout == [] {
                     break
                 }
+
+                #if os(tvOS)
+                let isStatusBarHidden = true
+                let statusBarHeight: CGFloat = 0
+                #else
+                let isStatusBarHidden = UIApplication.shared.isStatusBarHidden
+                let statusBarHeight = UIApplication.shared.statusBarFrame.heightz
+                #endif
                 
-                let statusBarHeight = UIApplication.shared.statusBarFrame.height
                 let nav = vc.navigationController ?? (vc as? UINavigationController)
                 let isNavBarHidden = nav?.isNavigationBarHidden ?? true
                 let isNavBarTranslucent = nav?.navigationBar.isTranslucent ?? false
                 let navBarHeight = nav?.navigationBar.frame.size.height ?? 44
-                let isStatusBarHidden = UIApplication.shared.isStatusBarHidden
+
                 if !isNavBarHidden && isNavBarTranslucent && !isStatusBarHidden { offsetY += statusBarHeight }
                 if !isNavBarHidden && isNavBarTranslucent { offsetY += navBarHeight }
                 if (isNavBarHidden && !isStatusBarHidden) { offsetY += statusBarHeight }
@@ -515,6 +524,8 @@ public class GSMessage: NSObject {
 
 }
 
+#if os(iOS)
+
 @objc fileprivate extension GSMessage {
     
     func keyboardWillShow(notification: NSNotification) {
@@ -536,6 +547,8 @@ public class GSMessage: NSObject {
     }
     
 }
+
+#endif
 
 extension GSMessage {
     

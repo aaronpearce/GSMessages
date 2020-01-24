@@ -8,12 +8,12 @@ Pod::Spec.new do |s|
   s.author       = { "Gesen" => "i@gesen.me" }
   s.source       = { :git => "https://github.com/wxxsw/GSMessages.git", :tag => s.version.to_s }
 
-  s.platform     = :ios, '8.0'
+  s.ios.deployment_target = "8.0"
+  s.tvos.deployment_target = "11.0"
   s.requires_arc = true
 
   s.source_files = 'GSMessages'
   
-  s.swift_version = "4.2"
-  s.swift_versions = ['4.2', '5.0']
+  s.swift_version = "5.0"
   
 end
